@@ -11,7 +11,14 @@ export interface ErrorResponse {
   details?: any;
 }
 
-
 export type Note = {
-    name : string
-}
+  name: string;
+};
+
+export type Notes = {
+  id: string;
+  name: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};

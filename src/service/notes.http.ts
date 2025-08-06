@@ -1,6 +1,6 @@
 import axios from "axios";
 import handleApi from "./handle.api";
-import type { Note } from "./types";
+import type { Note, Notes } from "./types";
 
 export default class HttpNotes {
   private readonly baseUrl: string;
@@ -18,7 +18,7 @@ export default class HttpNotes {
   }
 
   async httpGetAllNote() {
-    return handleApi(axios.get(this.baseUrl + "/all"));
+    return handleApi<Notes[]>(axios.get(this.baseUrl + "/all"));
   }
   
   async httpDeleteNote(noteId: string) {
