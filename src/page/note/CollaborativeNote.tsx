@@ -1,0 +1,68 @@
+import type { JSX } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import type { Collabrator, Notes } from "../../service/types";
+import HttpFactory from "../../service/http.factory";
+import { getUser } from "../common/utils";
+import { socket } from "../../service/socket";
+import { AvatarGroup } from "../../components/ui/AvatarGroup";
+
+const CollaborativeNote = (): JSX.Element => {
+  const { noteId } = useParams();
+  const [note, setNote] = useState<Notes | null>(null);
+  const [collaborators, setCollaborators] = useState<Collabrator[]>([]);
+
+  useEffect(() => {
+    const fetchNote = async () => {
+      const httpNotes = HttpFactory.notes();
+      const fetchedNote = await httpNotes.httpGetNote(noteId as string);
+      setNote(fetchedNote);
+    };
+
+    fetchNote();
+  }, []);
+
+  useEffect(() => {
+    const user = getUser();
+    socket.emit("note-join", noteId, user);
+    return () => {
+      socket.off("note-updated");
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchCollaborators = async () => {
+      const httpCollabs = HttpFactory.collab();
+      const res = await httpCollabs.httpGetAllCollaberators(noteId as string);
+      setCollaborators(res.collabrator);
+    };
+
+    fetchCollaborators();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = e.target.value;
+    setNote((prev) => (prev ? { ...prev, content: newContent } : prev));
+  };
+
+  if (!note) return <div className="text-white">Loading...</div>;
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white p-26">
+      <div className="max-w-5xl mx-auto flex flex-col gap-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">{note.name}</h1>
+          <AvatarGroup collaborators={collaborators} />
+        </div>
+
+        <textarea
+          className="w-full h-[70vh] bg-gray-800 text-white border border-gray-700 rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={note.content}
+          onChange={handleChange}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default CollaborativeNote;

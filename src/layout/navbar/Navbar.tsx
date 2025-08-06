@@ -53,7 +53,9 @@ const Navbar = () => {
         <div
           className={`${isOpen ? "block" : "hidden"} w-full md:block md:w-auto`}
           id="navbar-default"
-        ></div>
+        >
+          
+        </div>
       </div>
     </nav>
   );

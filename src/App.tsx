@@ -1,15 +1,26 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-import { Dashboard, Note } from "./page";
+import { Dashboard, CollaborativeNote } from "./page";
 import Navbar from "./layout/navbar/Navbar";
+import React from "react";
+import type { User } from "./page/common/types";
+import { generateRandomUser } from "./page/common/utils";
 
 function App() {
+  React.useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      const newUser: User = generateRandomUser();
+      localStorage.setItem("user", JSON.stringify(newUser));
+    }
+  }, []);
+
   return (
     <div>
       <BrowserRouter>
         <Navbar />
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/note/:noteId" element={<Note />} />
+          <Route path="/note/:noteId" element={<CollaborativeNote />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -1,4 +1,4 @@
 import Dashboard from "./dashboard/Dashboard";
-import Note from "./note/Note";
+import CollaborativeNote from "./note/CollaborativeNote";
 
-export { Dashboard, Note };
+export { Dashboard, CollaborativeNote };
