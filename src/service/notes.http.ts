@@ -14,7 +14,7 @@ export default class HttpNotes {
   }
 
   async httpGetNote(noteId: string) {
-    return handleApi(axios.get(this.baseUrl + `/${noteId}`));
+    return handleApi<Notes>(axios.get(this.baseUrl + `/${noteId}`));
   }
 
   async httpGetAllNote() {
