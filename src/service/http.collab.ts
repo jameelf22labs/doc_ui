@@ -14,4 +14,10 @@ export default class HttpCollab {
       axios.get(`${this.baseUrl}/${noteId}`)
     );
   };
+
+  httpLeaveRoom = (noteId: string, userName: string) => {
+    return handleApi(
+      axios.post(this.baseUrl + "/leaveRoom", { noteId, userName })
+    );
+  };
 }

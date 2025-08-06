@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import type { Collabrator, Notes } from "../../service/types";
 import HttpFactory from "../../service/http.factory";
 import { socket } from "../../service/socket";
@@ -11,6 +11,7 @@ const CollaborativeNote = (): JSX.Element => {
   const { noteId } = useParams();
   const [note, setNote] = useState<Notes | null>(null);
   const [collaborators, setCollaborators] = useState<Collabrator[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -52,6 +53,12 @@ const CollaborativeNote = (): JSX.Element => {
     socket.emit("note-change-content", noteId, newContent);
   };
 
+  const handleLeaveRoom = () => {
+    const httpCollabs = HttpFactory.collab();
+    httpCollabs.httpLeaveRoom(noteId as string, getUser().userName);
+    navigate("/");
+  };
+
   if (!note) return <div className="text-white">Loading...</div>;
 
   return (
@@ -67,6 +74,15 @@ const CollaborativeNote = (): JSX.Element => {
           value={note.content}
           onChange={handleChange}
         />
+
+        <div className="flex justify-end p-3 w-full">
+          <button
+            onClick={handleLeaveRoom}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-all"
+          >
+            Leave Room
+          </button>
+        </div>
       </div>
     </div>
   );
