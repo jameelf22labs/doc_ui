@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import type { Collabrator, Notes } from "../../service/types";
 import HttpFactory from "../../service/http.factory";
-import { getUser } from "../common/utils";
 import { socket } from "../../service/socket";
 import { AvatarGroup } from "../../components/ui/AvatarGroup";
+import { getUser } from "../../common/utils";
 
 const CollaborativeNote = (): JSX.Element => {
   const { noteId } = useParams();
@@ -24,7 +24,13 @@ const CollaborativeNote = (): JSX.Element => {
 
   useEffect(() => {
     const user = getUser();
+
     socket.emit("note-join", noteId, user);
+
+    socket.on("note-changed-content", (content) => {
+      setNote((prev) => (prev ? { ...prev, content: content } : prev));
+    });
+
     return () => {
       socket.off("note-updated");
     };
@@ -43,6 +49,7 @@ const CollaborativeNote = (): JSX.Element => {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setNote((prev) => (prev ? { ...prev, content: newContent } : prev));
+    socket.emit("note-change-content", noteId, newContent);
   };
 
   if (!note) return <div className="text-white">Loading...</div>;

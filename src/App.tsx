@@ -2,8 +2,8 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { Dashboard, CollaborativeNote } from "./page";
 import Navbar from "./layout/navbar/Navbar";
 import React from "react";
-import type { User } from "./page/common/types";
-import { generateRandomUser } from "./page/common/utils";
+import { generateRandomUser } from "./common/utils";
+import type { User } from "./common/types";
 
 function App() {
   React.useEffect(() => {

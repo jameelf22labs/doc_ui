@@ -1,4 +1,4 @@
-import type { User } from "../page/common/types";
+import type { User } from "../common/types";
 
 export interface SuccessResponse<T> {
   status: boolean;
