@@ -34,12 +34,15 @@ const CollaborativeNote = (): JSX.Element => {
       setNote((prev) => (prev ? { ...prev, content: content } : prev));
     });
 
-    socket.on("note-new-user-joined", (user) => {
+    socket.on("note-new-user-joined", () => {
       setIsUserAdded(!isUserAdded);
       toast(<span className="text-xl"> New user joined </span>);
     });
 
-    return () => {};
+    socket.on("note-user-leaved", () => {
+      setIsUserAdded(!isUserAdded);
+      toast(<span className="text-xl"> User leave </span>);
+    });
   }, []);
 
   useEffect(() => {
@@ -52,6 +55,21 @@ const CollaborativeNote = (): JSX.Element => {
     fetchCollaborators();
   }, [isUserAdded]);
 
+  const handleUserLeave = () => {
+    try {
+      socket.emit("note-user-leave", noteId, getUser());
+      const httpCollabs = HttpFactory.collab();
+      httpCollabs.httpLeaveRoom(noteId as string, getUser().userName);
+    } catch (error) {}
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("beforeunload", handleUserLeave);
+    return () => {
+      window.removeEventListener("beforeunload", handleUserLeave);
+    };
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setNote((prev) => (prev ? { ...prev, content: newContent } : prev));
@@ -59,8 +77,7 @@ const CollaborativeNote = (): JSX.Element => {
   };
 
   const handleLeaveRoom = () => {
-    const httpCollabs = HttpFactory.collab();
-    httpCollabs.httpLeaveRoom(noteId as string, getUser().userName);
+    handleUserLeave();
     navigate("/");
   };
 
