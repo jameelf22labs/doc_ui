@@ -10,7 +10,7 @@ export default class HttpNotes {
   }
 
   async httpCreateNote(note: Note) {
-    return handleApi(axios.post(this.baseUrl + "/createNote", { ...note }));
+    return handleApi(axios.post(this.baseUrl + "/newNote", { ...note }));
   }
 
   async httpGetNote(noteId: string) {

@@ -11,9 +11,14 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import { format } from "date-fns";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 
 const Dashboard = (): JSX.Element => {
   const [notes, setNotes] = React.useState<Notes[]>([]);
+  const [noteName, setNoteName] = React.useState("");
+  const [isCreating, setIsCreating] = React.useState(false);
 
   const fetchNotes = async () => {
     try {
@@ -21,7 +26,7 @@ const Dashboard = (): JSX.Element => {
       const res = await httpNotes.httpGetAllNote();
       setNotes(res);
     } catch (error) {
-      console.error("Failed to fetch notes:", error);
+      console.error("Error to fetch notes:", error);
     }
   };
 
@@ -33,17 +38,57 @@ const Dashboard = (): JSX.Element => {
     return format(new Date(dateString), "PPpp");
   };
 
+  const handleCreateNote = async () => {
+    if (!noteName.trim()) return;
+    try {
+      setIsCreating(true);
+      const httpNotes = HttpFactory.notes();
+      await httpNotes.httpCreateNote({ name: noteName });
+      await fetchNotes(); 
+      setNoteName(""); 
+    } catch (error) {
+      console.error("Error from create note:", error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center px-4 py-10 pt-20 min-h-screen h-full bg-[#0d1117] text-white">
       <div className="w-full max-w-7xl flex flex-col gap-6">
         <div className="flex justify-between items-center border-b border-gray-700 pb-4">
           <h1 className="font-bold text-3xl">All Notes</h1>
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition">
-            + New Note
-          </button>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium">
+                + New Note
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-[#161b22] text-white border border-gray-700">
+              <DialogHeader>
+                <DialogTitle>Create New Note</DialogTitle>
+              </DialogHeader>
+              <Input
+                placeholder="Enter note name"
+                value={noteName}
+                onChange={(e) => setNoteName(e.target.value)}
+                className="mt-4 bg-[#0d1117] border border-gray-700 text-white"
+              />
+              <DialogFooter className="mt-4">
+                <Button
+                  onClick={handleCreateNote}
+                  disabled={isCreating}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isCreating ? "Creating..." : "Create"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
 
-        <div className="w-full bg-[#161b22]  rounded-lg shadow-md overflow-hidden">
+        <div className="w-full bg-[#161b22] rounded-lg shadow-md overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>

@@ -1,9 +1,10 @@
 import { faker } from "@faker-js/faker";
 import type { User } from "./types";
+import { nanoid } from "nanoid";
 
 export const generateRandomUser = (): User => {
   return {
-    userName: faker.internet.userName(),
+    userName: nanoid(),
     picture: faker.image.avatar(),
   };
 };
