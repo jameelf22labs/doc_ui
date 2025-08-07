@@ -6,7 +6,7 @@ export default class HttpNotes {
   private readonly baseUrl: string;
 
   constructor() {
-    const host = import.meta.env.VITE_API_URL || "http://localhost:9090";
+    const host = import.meta.env.VITE_API_URL || "https://sde-intern-resources-node-io-api.vaacdq.easypanel.host";
     this.baseUrl = `${host}/api/v1/notes`;
   }
 
