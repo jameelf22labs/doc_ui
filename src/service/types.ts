@@ -1,3 +1,5 @@
+import type { User } from "../common/types";
+
 export interface SuccessResponse<T> {
   status: boolean;
   message: string;
@@ -11,7 +13,20 @@ export interface ErrorResponse {
   details?: any;
 }
 
-
 export type Note = {
-    name : string
+  name: string;
+};
+
+export type Notes = {
+  id: string;
+  name: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+
+export type Collabrator = {
+  socketId: string;
+  user : User
 }
