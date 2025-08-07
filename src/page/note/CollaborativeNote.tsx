@@ -6,11 +6,13 @@ import HttpFactory from "../../service/http.factory";
 import { socket } from "../../service/socket";
 import { AvatarGroup } from "../../components/ui/AvatarGroup";
 import { getUser } from "../../common/utils";
+import { toast } from "sonner";
 
 const CollaborativeNote = (): JSX.Element => {
   const { noteId } = useParams();
   const [note, setNote] = useState<Notes | null>(null);
   const [collaborators, setCollaborators] = useState<Collabrator[]>([]);
+  const [isUserAdded, setIsUserAdded] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,9 +34,12 @@ const CollaborativeNote = (): JSX.Element => {
       setNote((prev) => (prev ? { ...prev, content: content } : prev));
     });
 
-    return () => {
-      socket.off("note-updated");
-    };
+    socket.on("note-new-user-joined", (user) => {
+      setIsUserAdded(!isUserAdded);
+      toast(<span className="text-xl"> New user joined </span>);
+    });
+
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -45,7 +50,7 @@ const CollaborativeNote = (): JSX.Element => {
     };
 
     fetchCollaborators();
-  }, []);
+  }, [isUserAdded]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;

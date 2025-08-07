@@ -4,6 +4,7 @@ import Navbar from "./layout/navbar/Navbar";
 import React from "react";
 import { generateRandomUser } from "./common/utils";
 import type { User } from "./common/types";
+import { Toaster } from "sonner";
 
 function App() {
   React.useEffect(() => {
@@ -18,6 +19,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Navbar />
+        <Toaster />
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/note/:noteId" element={<CollaborativeNote />} />
