@@ -5,6 +5,7 @@ type AvatarGroupProps = {
 };
 
 export const AvatarGroup = ({ collaborators }: AvatarGroupProps) => {
+  console.log(collaborators)
   return (
     <div className="flex -space-x-4">
       {collaborators.map(({ user, socketId }) => (
