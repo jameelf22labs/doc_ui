@@ -6,7 +6,8 @@ export default class HttpCollab {
   private readonly baseUrl: string;
 
   constructor() {
-    this.baseUrl = "http://localhost:9090/api/v1/collab";
+    const host = import.meta.env.VITE_API_URL || "http://localhost:9090";
+    this.baseUrl = `${host}/api/v1/collab`;
   }
 
   httpGetAllCollaberators = (noteId: string) => {
